@@ -1,5 +1,4 @@
 package com.testShape;
-
 import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.ButtonGroup;
@@ -21,16 +21,19 @@ import javax.swing.ButtonModel;
 public class DrawListener implements MouseListener,MouseMotionListener{
 
     public Graphics2D g;
-    public int x1,y1,x2,y2;
+    public int x1,y1,x2,y2,ox,oy,x3,y3;
     public ButtonGroup bg;
     public String command;
     public Color color;
     public DrawBorder db;
+    public ArrayList list;
+    public boolean flag=true;
 
     public static final  Stroke s1 = new BasicStroke(1);
     public static final  Stroke s2 = new BasicStroke(10);
     public static final  Stroke s3 = new BasicStroke(15);
 
+    public Random r =new Random();
     //构造函数1
     public DrawListener(Graphics g1){
         g=(Graphics2D)g1;
@@ -43,10 +46,11 @@ public class DrawListener implements MouseListener,MouseMotionListener{
     }
 
     //构造函数3
-    public DrawListener(Graphics g2, ButtonGroup bg2, DrawBorder db1) {
+    public DrawListener(Graphics g2, ButtonGroup bg2, DrawBorder db1,ArrayList list) {
         g=(Graphics2D)g2;
         bg=bg2;
         db=db1;
+        this.list=list;
     }
 
     //鼠标按下事件监听
@@ -72,14 +76,22 @@ public class DrawListener implements MouseListener,MouseMotionListener{
         //如果选中的是绘制直线的按钮，那么根据鼠标按下点的坐标和释放点的左边绘制直线（两点确定一条直线）
         if("pic10".equals(command))
         {
-            g.drawLine(x1, y1, x2, y2);
+            Shape line = new Line(x1, y1, x2, y2,g.getColor(),1);
+            line.Draw(g);
+            list.add(line);
         }//同理选中的是矩形按钮，那么绘制矩形（这里有绘制矩形的纠正，不纠正的话从右下角往左上角方向绘制矩形会出现问题，参看后面难点解析）
         else if("pic12".equals(command)){
-            g.drawRect(Math.min(x2, x1),Math.min(y2, y1), Math.abs(x2-x1),Math.abs(y1-y2));
+            Shape rect = new Rect(Math.min(x2, x1),Math.min(y2, y1), Math.abs(x2-x1),Math.abs(y1-y2),g.getColor(),1);
+            rect.Draw(g);
+            list.add(rect);
         }//绘制椭圆
         else if("pic14".equals(command)){
-            g.drawOval(Math.min(x2, x1),Math.min(y2, y1), Math.abs(x2-x1),Math.abs(y1-y2));
+            Shape oval = new Oval(Math.min(x2, x1),Math.min(y2, y1), Math.abs(x2-x1),Math.abs(y1-y2),g.getColor(),1);
+            oval.Draw(g);
+            list.add(oval);
+
         }
+
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -101,9 +113,12 @@ public class DrawListener implements MouseListener,MouseMotionListener{
         int x=e.getX();
         int y=e.getY();
 
-        //画笔功能
+        //铅笔功能
         if("pic6".equals(command)){
-            g.drawLine(x1, y1, x, y);
+
+            Shape line = new Line(x1, y1, x, y,g.getColor(),1);
+            line.Draw(g);
+            list.add(line);
             x1=x;
             y1=y;
         }
@@ -112,17 +127,27 @@ public class DrawListener implements MouseListener,MouseMotionListener{
             db.c=Color.white;
             g.setColor(db.c);
             g.setStroke(s3);
-            g.drawLine(x1, y1, x, y);
+
+            Shape line = new Line(x1, y1, x, y,g.getColor(),15);
+            line.Draw(g);
+            list.add(line);
+
             x1=x;
             y1=y;
         }
         //刷子功能
         else if("pic7".equals(command)){
             g.setStroke(s2);//设置画笔 粗细
-            g.drawLine(x1, y1, x, y);
+
+            Shape line = new Line(x1, y1, x, y,g.getColor(),10);
+            line.Draw(g);
+            list.add(line);
+
             x1=x;
             y1=y;
         }
+
+
     }
 
     public void mouseMoved(MouseEvent e) {
