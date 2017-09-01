@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact name="testShape:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/testShape_jar</output-path>
+    <root id="root">
+      <element id="directory" name="libs">
+        <element id="archive" name="testShape.jar">
+          <element id="directory" name="META-INF">
+            <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" />
+          </element>
+          <element id="module-output" name="testShape" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
